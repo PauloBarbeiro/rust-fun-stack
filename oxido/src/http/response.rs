@@ -65,7 +65,10 @@ mod describe_response {
     fn should_sent_response_without_body(){
         let mut out = Vec::new();
 
-        Response::new(StatusCode::NotFound, None).send(&mut out).unwrap();
+        Response::new(
+            StatusCode::NotFound,
+            None
+        ).send(&mut out).unwrap();
 
         let string_output = String::from_utf8(out).unwrap();
         assert_eq!(string_output, "HTTP/1.1 404 Not Found\r\n\r\n");

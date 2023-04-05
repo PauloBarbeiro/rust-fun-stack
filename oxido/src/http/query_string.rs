@@ -3,12 +3,12 @@
 pub mod query_string {
     use std::collections::HashMap;
     
-    #[derive(Debug)]
+    #[derive(Debug, PartialEq)]
     pub struct QueryString<'buffer> {
         data: HashMap<&'buffer str, Value<'buffer>>,
     }
 
-    #[derive(Debug)]
+    #[derive(Debug, PartialEq)]
     pub enum Value<'buffer> {
         Single(&'buffer str),
         // The "multiple" option should be a dynamic-sized array stored in the Heap.
@@ -22,7 +22,6 @@ pub mod query_string {
         }
     }
 
-    // a=1&b=2&c&d=&e===&d=7&d=abc
     impl<'buffer> From<&'buffer str> for QueryString<'buffer> {
         fn from(s: &'buffer str) -> Self {
             let mut data = HashMap::new();
@@ -51,9 +50,9 @@ pub mod query_string {
                         Value::Multiple(vec) => vec.push(val)
                     })
                     .or_insert(Value::Single(val));
-        }
+            }
 
-        QueryString { data }
-    }
+            QueryString { data }
+        }
     }
 }

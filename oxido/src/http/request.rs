@@ -57,13 +57,12 @@ impl<'buffer> TryFrom<&'buffer [u8]> for Request<'buffer> {
             query_string = Some(QueryString::from(&path[i + 1..]));
             path = &path[..i];
         }
-
+print!("{:?}", query_string);
         Ok(Self {
             path,
             query: query_string,
             method
         })
-
     }
 }
 
@@ -119,6 +118,53 @@ impl ParseError {
     }
 }
 
-impl Error for ParseError {
-    
+impl Error for ParseError {}
+
+#[cfg(test)]
+mod describe_request {
+    use super::request::Request;
+    use super::super::method::method::Method;
+    use super::super::query_string::query_string::QueryString;
+/*
+GET / HTTP/1.1
+GET /test HTTP/1.1
+GET /test?a=1&b=2&c&d=&e===&d=7&d=abc HTTP/1.1
+
+GET /style.css HTTP/1.1
+*/
+    #[test]
+    fn should_build_a_request_to_root(){
+        let buffer = b"GET / HTTP/1.1\r";
+        let request = Request::try_from(&buffer[..]).unwrap();
+
+        assert_eq!(request.method, Method::GET);
+        assert_eq!(request.path(), "/");
+        assert_eq!(request.query, None);
+    }
+
+    #[test]
+    fn should_build_a_request_to_special_path(){
+        let buffer = b"GET /test HTTP/1.1\r";
+        let request = Request::try_from(&buffer[..]).unwrap();
+
+        assert_eq!(request.method, Method::GET);
+        assert_eq!(request.path(), "/test");
+        assert_eq!(request.query, None);
+    }
+
+    #[test]
+    fn should_build_a_request_with_query_string(){
+        let buffer = b"GET /test?a=1&b=2&c&d=&e===&d=7&d=abc HTTP/1.1\r";
+        let request = Request::try_from(&buffer[..]).unwrap();
+
+        assert_eq!(request.method, Method::GET);
+        assert_eq!(request.path(), "/test");
+        // @todo: how to assert the query_string
+        // assert_eq!(request.query.expect("a"), "1");
+    }
+}
+
+#[cfg(test)]
+mod describe_parse_error {
+
 }
