@@ -7,7 +7,6 @@ use std::env;
 use server::Server;
 use server_handler::ServerHandler;
 
-
 fn main() {
     print!("Starting server...\n");
     let default_path = format!("{}/public", env!("CARGO_MANIFEST_DIR"));
