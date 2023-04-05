@@ -57,7 +57,7 @@ impl<'buffer> TryFrom<&'buffer [u8]> for Request<'buffer> {
             query_string = Some(QueryString::from(&path[i + 1..]));
             path = &path[..i];
         }
-print!("{:?}", query_string);
+
         Ok(Self {
             path,
             query: query_string,
